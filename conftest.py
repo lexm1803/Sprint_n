@@ -30,8 +30,16 @@ def registered_and_auth_user(api_client, registered_user):
     
     auth = AuthEndpoint(api_client)
     token = auth.get_token(email, password)
-    return email, password, token
+    created_order_ids = []
+    yield email, password, token, created_order_ids
 
+    api_client.set_auth_token(f'Bearer {token}')
+    listings = ListingEndpoint(api_client)
+    for order_id in created_order_ids:
+        try:
+            listings.delete(order_id)
+        except Exception:
+            pass
 
 @pytest.fixture
 def get_auth_token(registered_and_auth_user):
@@ -40,10 +48,11 @@ def get_auth_token(registered_and_auth_user):
 
 @pytest.fixture
 def get_auth_token_and_order_id(api_client, registered_and_auth_user):
-    email, password, token = registered_and_auth_user
+    email, password, token, created_order_ids = registered_and_auth_user
     listings = ListingEndpoint(api_client)
     response = listings.create_with_category("Авто")
     order_id = response.body.id
+    created_order_ids.append(order_id) # type: ignore
     return token, order_id
 
 
@@ -55,7 +64,16 @@ def second_registered_and_auth_user(api_client):
     
     auth = AuthEndpoint(api_client)
     token = auth.get_token(email, password)
-    return email, password, token
+    created_order_ids = []
+    yield email, password, token, created_order_ids
+
+    api_client.set_auth_token(f'Bearer {token}')
+    listings = ListingEndpoint(api_client)
+    for order_id in created_order_ids:
+        try:
+            listings.delete(order_id)
+        except Exception:
+            pass
 
 
 @pytest.fixture

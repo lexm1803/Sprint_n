@@ -18,13 +18,15 @@ class TestCreateListing:
         registered_and_auth_user,
         category,
     ):
-        email, password, token = registered_and_auth_user
+        email, password, token, created_order_ids = registered_and_auth_user
         
         auth = AuthEndpoint(api_client)
         auth.get_token(email, password)
 
         listings = ListingEndpoint(api_client)
         response = listings.create_with_category(category)
-
+        created_order_ids.append(response.body.id)
+        
         assert response.status_code == 201
         assert response.body.category == category
+        

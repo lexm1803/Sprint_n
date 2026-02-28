@@ -14,7 +14,7 @@ class TestAuth:
         api_client,
         registered_and_auth_user,
     ):
-        email, password, _ = registered_and_auth_user
+        email, password, _, _ = registered_and_auth_user
         auth = AuthEndpoint(api_client)
         data = AuthData(email=email, password=password)
         response = auth.auth(data)

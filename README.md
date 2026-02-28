@@ -145,3 +145,4 @@ random_data = ListingDataGenerator.create_random()
 - Типизация через Pydantic
 - Allure отчёты
 - Чистая архитектура
+- http метод delete не реализован на бэкенде
