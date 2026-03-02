@@ -10,12 +10,6 @@ from utils.generators import UserDataGenerator
 
 
 @pytest.fixture
-def registered_user():
-    email, password = UserDataGenerator.generate()
-    return email, password
-
-
-@pytest.fixture
 def api_client():
     client = APIClient()
     yield client
@@ -23,8 +17,8 @@ def api_client():
 
 
 @pytest.fixture
-def registered_and_auth_user(api_client, registered_user):
-    email, password = registered_user
+def registered_and_auth_user(api_client):
+    email, password = UserDataGenerator.generate()
     register = RegisterEndpoint(api_client)
     register.register_with_email(email, password)
     
@@ -40,6 +34,11 @@ def registered_and_auth_user(api_client, registered_user):
             listings.delete(order_id)
         except Exception:
             pass
+    
+    try:
+        api_client.delete('/api/v1/user')
+    except Exception:
+        pass
 
 @pytest.fixture
 def get_auth_token(registered_and_auth_user):
@@ -74,6 +73,10 @@ def second_registered_and_auth_user(api_client):
             listings.delete(order_id)
         except Exception:
             pass
+    try:
+        api_client.delete('/api/v1/user')
+    except Exception:
+        pass
 
 
 @pytest.fixture

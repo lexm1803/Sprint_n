@@ -2,6 +2,7 @@ import allure
 
 from endpoints.register_endpoint import RegisterEndpoint
 from config.data import ERROR_REGISTER_NOT_UNIQUE_EMAIL
+from utils.generators import UserDataGenerator
 
 
 @allure.feature("Регистрация")
@@ -12,9 +13,8 @@ class TestRegister:
     def test_register_new_user_with_unique_email_status_code_201(
         self,
         api_client,
-        registered_user,
     ):
-        email, password = registered_user
+        email, password = UserDataGenerator.generate()
         register = RegisterEndpoint(api_client)
         response = register.register_with_email(email, password)
 
@@ -26,9 +26,8 @@ class TestRegister:
     def test_register_new_user_with_not_unique_email_status_code_400(
         self,
         api_client,
-        registered_user,
     ):
-        email, password = registered_user
+        email, password = UserDataGenerator.generate()
         register = RegisterEndpoint(api_client)
 
         register.register_with_email(email, password)
