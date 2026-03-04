@@ -87,3 +87,15 @@ def second_user_token(second_registered_and_auth_user):
 @pytest.fixture(params=CATEGORIES, ids=lambda x: x)
 def category(request):
     return request.param
+
+@pytest.fixture
+def clean_up_user_data(api_client):
+    def clean_up(token):
+        api_client.set_auth_token(token)
+        try:
+            api_client.delete('/api/v1/user')
+        except Exception:
+            pass
+        
+    yield clean_up
+    

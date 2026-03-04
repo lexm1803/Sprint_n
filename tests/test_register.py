@@ -13,10 +13,13 @@ class TestRegister:
     def test_register_new_user_with_unique_email_status_code_201(
         self,
         api_client,
+        clean_up_user_data,
     ):
         email, password = UserDataGenerator.generate()
         register = RegisterEndpoint(api_client)
         response = register.register_with_email(email, password)
+        token = response.body.token
+        clean_up_user_data(token)
 
         assert response.status_code == 201
         assert response.body.user.email == email
@@ -26,12 +29,15 @@ class TestRegister:
     def test_register_new_user_with_not_unique_email_status_code_400(
         self,
         api_client,
+        clean_up_user_data,
     ):
         email, password = UserDataGenerator.generate()
         register = RegisterEndpoint(api_client)
 
         register.register_with_email(email, password)
         response = register.register_with_email(email, password)
+        token = response.body.token
+        clean_up_user_data(token)
 
         assert response.status_code == 400
         assert response.body.message == ERROR_REGISTER_NOT_UNIQUE_EMAIL
